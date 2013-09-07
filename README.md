@@ -12,6 +12,10 @@ This module is installed via npm:
 $ npm install level-microblog
 ```
 
+# Usage
+
+[Read the tests]()
+
 ## License
 
 ### Copyright (c) 2013, Eugene Ware
