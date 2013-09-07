@@ -102,7 +102,8 @@ Users.prototype.message = function(handle, msg, cb) {
         message.to = follower;
         self.mblog.Feed.save(message, next);
       });
-      function done() {
+      function done(err) {
+        if (err) return cb(err);
         cb(null, id);
       }
     });
