@@ -23,7 +23,7 @@ Users.prototype.all = function(cb) {
   var users = [];
   this.users.createReadStream().pipe(through(write, end));
   function write(user) {
-    users.push(user);
+    users.push(user.value);
   }
   function end() {
     cb(null, users);
@@ -32,6 +32,13 @@ Users.prototype.all = function(cb) {
 
 Users.prototype.save = function(user, cb) {
   this.users.put(user.handle, user, cb);
-}
+};
+
+Users.prototype.get = function(handle, cb) {
+  this.users.get(handle, function (err, data) {
+    if (err) return cb(err);
+    cb(null, data);
+  });
+};
 
 module.exports = LevelMicroBlog;

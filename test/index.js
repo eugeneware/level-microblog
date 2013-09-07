@@ -27,10 +27,23 @@ describe('microblog', function() {
     }, done);
   });
 
+  it('should be able to retrieve a user', function(done) {
+    mblog.Users.get('eugeneware', function (err, user) {
+      if (err) return done(err);
+      expect(user.handle).to.equal('eugeneware');
+      expect(user.name).to.equal('Eugene Ware');
+      done();
+    });
+  });
+
   it('should be able to have users', function(done) {
     mblog.Users.all(function (err, users) {
       if (err) return done(err);
       expect(users.length).to.equal(3);
+      users.forEach(function (user) {
+        expect(user.handle).to.be.ok();
+        expect(user.name).to.be.ok();
+      });
       done();
     });
   });
