@@ -1,12 +1,18 @@
 var level = require('level'),
     util = require('util'),
     through = require('through'),
+    timestamp = require('monotonic-timestamp'),
     sublevel = require('level-sublevel');
+
+/**
+ * Main Microblog Class
+ */
 
 function LevelMicroBlog(dbPath) {
   if (!(this instanceof LevelMicroBlog)) return new LevelMicroBlog(dbPath);
   this.db = sublevel(level(dbPath, { valueEncoding: 'json' }));
   this.Users = new Users(this);
+  this.Messages = new Messages(this);
 }
 
 LevelMicroBlog.prototype.close = function(cb) {
@@ -14,6 +20,10 @@ LevelMicroBlog.prototype.close = function(cb) {
   this.db = null;
   cb(null);
 }
+
+/**
+ * Model
+ */
 
 function Models(mblog, name, key) {
   this.name = name;
@@ -34,7 +44,11 @@ Models.prototype.all = function(cb) {
 };
 
 Models.prototype.save = function(model, cb) {
-  this[this.name].put(model[this.key], model, cb);
+  var key = this.getKey(model);
+  this[this.name].put(key, model, function (err) {
+    if (err) return cb(err);
+    cb(null, key);
+  });
 };
 
 
@@ -49,10 +63,21 @@ Models.prototype.del = function(key, cb) {
   this[this.name].del(key, cb);
 };
 
+Models.prototype.getKey = function(model) {
+  if (typeof model[this.key] === 'undefined' && this.keyfn) {
+    return this.keyfn(model);
+  } else {
+    return model[this.key];
+  }
+};
+
+/**
+ * User
+ */
+
 function Users(mblog) {
   Models.call(this, mblog, 'users', 'handle');
 }
-
 util.inherits(Users, Models);
 
 Users.prototype.message = function(handle, msg, cb) {
@@ -60,5 +85,16 @@ Users.prototype.message = function(handle, msg, cb) {
     cb(null, {});
   });
 };
+
+/**
+ * Message
+ */
+
+function Messages(mblog) {
+  Models.call(this, mblog, 'messages', 'id');
+}
+util.inherits(Messages, Models);
+
+Messages.prototype.keyfn = timestamp;
 
 module.exports = LevelMicroBlog;
