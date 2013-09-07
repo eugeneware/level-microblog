@@ -16,6 +16,7 @@ function LevelMicroBlog(dbPath) {
   this.db = sublevel(level(dbPath, { keyEncoding: bytewise, valueEncoding: 'json' }));
   this.Users = new Users(this);
   this.Messages = new Messages(this);
+  this.Feed = new Feed(this);
 }
 
 LevelMicroBlog.prototype.close = function(cb) {
@@ -54,7 +55,6 @@ Models.prototype.save = function(model, cb) {
   });
 };
 
-
 Models.prototype.get = function(key, cb) {
   this[this.name].get(key, function (err, data) {
     if (err) return cb(err);
@@ -71,6 +71,10 @@ Models.prototype.getKey = function(model) {
     var key = this.keyfn(model);
     model[this.key] = key;
     return key;
+  } else if (Array.isArray(this.key)) {
+    return this.key.map(function (prop) {
+      return model[prop];
+    });
   } else {
     return model[this.key];
   }
@@ -104,3 +108,12 @@ function Messages(mblog) {
 util.inherits(Messages, Models);
 
 Messages.prototype.keyfn = timestamp;
+
+/**
+ * Feed
+ */
+function Feed(mblog) {
+  Models.call(this, mblog, 'feed', ['handle', 'id']);
+}
+util.inherits(Feed, Models);
+

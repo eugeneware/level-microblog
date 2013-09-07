@@ -119,4 +119,22 @@ describe('microblog', function() {
       });
     });
   });
+
+  describe('Feed', function() {
+    it('should be able to stick a message into a feed', function(done) {
+      mblog.Users.message('eugeneware', 'Wazzup?', function (err, id) {
+        if (err) return done(err);
+        mblog.Messages.get(id, function (err, msg) {
+          if (err) return done(err);
+          mblog.Feed.save(msg, function (err, id) {
+            if (err) return done(err);
+            expect(id.length).to.equal(2);
+            expect(id[0]).to.equal('eugeneware');
+            expect(id[1]).to.be.above(0);
+            done();
+          });
+        });
+      });
+    });
+  });
 });
