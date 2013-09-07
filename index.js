@@ -99,9 +99,8 @@ Users.prototype.message = function(handle, msg, cb) {
       if (err) return cb(err);
       var next = after(user.followers.length, done);
       user.followers.forEach(function (follower) {
-        var _msg = JSON.parse(JSON.stringify(message));
-        _msg.to = follower;
-        self.mblog.Feed.save(_msg, next);
+        message.to = follower;
+        self.mblog.Feed.save(message, next);
       });
       function done() {
         cb(null, id);
