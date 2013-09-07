@@ -131,7 +131,13 @@ describe('microblog', function() {
             expect(id.length).to.equal(2);
             expect(id[0]).to.equal('eugeneware');
             expect(id[1]).to.be.above(0);
-            done();
+            mblog.Feed.get(id, function (err, msg) {
+              if (err) return done(err);
+              expect(msg.handle).to.equal('eugeneware');
+              expect(msg.message).to.equal('Wazzup?');
+              expect(msg.id).to.equal(id[1]);
+              done();
+            });
           });
         });
       });
