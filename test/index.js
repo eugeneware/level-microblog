@@ -6,11 +6,11 @@ var expect = require('expect.js'),
     levelMicroblog = require('..');
 
 describe('microblog', function() {
-  var dbPath = path.join(__dirname, '..', 'data', 'testdb'), mblog;
+  var users, dbPath = path.join(__dirname, '..', 'data', 'testdb'), mblog;
   beforeEach(function(done) {
     rimraf.sync(dbPath); 
     mblog = levelMicroblog(dbPath);
-    var users = require('./fixture/users.json');
+    users = require('./fixture/users.json');
     var next = after(users.length, done);
     users.forEach(function (user) {
       mblog.Users.save(user, next);
@@ -121,6 +121,23 @@ describe('microblog', function() {
   });
 
   describe('Feed', function() {
+    var msgCount = 10;
+
+    beforeEach(function(done) {
+      var num = msgCount;
+      var next = after(num*users.length, done);
+      function prop(name) {
+        return function (obj) {
+          return obj[name];
+        };
+      }
+      range(0, num).forEach(function (i) {
+        users.map(prop('handle')).forEach(function (user) {
+          mblog.Users.message(user, 'This is message ' + i, next);
+        });
+      });
+    });
+
     it('should be able to send a status update to followers', function(done) {
       mblog.Users.message('eugeneware', 'Wazzup?', function (err, id) {
         if (err) return done(err);
