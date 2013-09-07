@@ -41,4 +41,8 @@ Users.prototype.get = function(handle, cb) {
   });
 };
 
+Users.prototype.del = function(handle, cb) {
+  this.users.del(handle, cb);
+}
+
 module.exports = LevelMicroBlog;

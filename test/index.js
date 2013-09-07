@@ -36,6 +36,18 @@ describe('microblog', function() {
     });
   });
 
+  it('should be able to delete a user', function(done) {
+    mblog.Users.del('eugeneware', get);
+    function get(err) {
+      if (err) return done(err);
+      mblog.Users.get('eugeneware', check);
+    }
+    function check(err, user) {
+      if (err && err.name === 'NotFoundError') return done();
+      done(new Error('Problem deleting user'));
+    }
+  });
+
   it('should be able to have users', function(done) {
     mblog.Users.all(function (err, users) {
       if (err) return done(err);
