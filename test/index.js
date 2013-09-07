@@ -2,6 +2,7 @@ var expect = require('expect.js'),
     path = require('path'),
     rimraf = require('rimraf'),
     after = require('after'),
+    range = require('range').range,
     levelMicroblog = require('..');
 
 describe('microblog', function() {
@@ -74,10 +75,31 @@ describe('microblog', function() {
   });
 
   describe('Messages', function() {
-    it.only('should be able to create a new message', function(done) {
+    var msgCount = 10;
+
+    beforeEach(function(done) {
+      var num = msgCount;
+      var next = after(num, done);
+      range(0, num).forEach(function (i) {
+        mblog.Messages.save({ message: 'This is message ' + i }, next);
+      });
+    });
+
+    it('should be able to create a new message', function(done) {
       mblog.Messages.save({ message: 'Hello, world!' }, function (err, id) {
         if (err) return done(err);
         expect(id).to.be.above(0);
+        done();
+      });
+    });
+
+    it('should be able to get a list of messages', function(done) {
+      mblog.Messages.all(function (err, messages) {
+        if (err) return done(err);
+        expect(messages.length).to.equal(msgCount);
+        messages.forEach(function (message) {
+          expect(message.message).to.match(/^This is message [0-9]+$/);
+        });
         done();
       });
     });
