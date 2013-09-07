@@ -2,6 +2,7 @@ var expect = require('expect.js'),
     path = require('path'),
     rimraf = require('rimraf'),
     after = require('after'),
+    through = require('through'),
     range = require('range').range,
     levelMicroblog = require('..');
 
@@ -160,6 +161,14 @@ describe('microblog', function() {
         });
         done();
       });
+    });
+
+    it('should be able to get a stream feed for a user', function(done) {
+      mblog.Feed.createReadStreamByUser('eugeneware')
+        .pipe(through(write, done));
+      function write(msg) {
+        expect(msg.to).to.equal('eugeneware');
+      }
     });
   });
 });

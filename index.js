@@ -142,3 +142,7 @@ Feed.prototype.byUser = function (handle, cb) {
   }
 };
 
+Feed.prototype.createReadStreamByUser = function (handle, cb) {
+  return this.feed.createReadStream(
+    { start: [handle, -Infinity], end: [handle, +Infinity], keys: false });
+};
