@@ -65,7 +65,9 @@ Models.prototype.del = function(key, cb) {
 
 Models.prototype.getKey = function(model) {
   if (typeof model[this.key] === 'undefined' && this.keyfn) {
-    return this.keyfn(model);
+    var key = this.keyfn(model);
+    model[this.key] = key;
+    return key;
   } else {
     return model[this.key];
   }

@@ -99,6 +99,7 @@ describe('microblog', function() {
         expect(messages.length).to.equal(msgCount);
         messages.forEach(function (message) {
           expect(message.message).to.match(/^This is message [0-9]+$/);
+          expect(message.id).to.be.above(0);
         });
         done();
       });
