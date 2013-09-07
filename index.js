@@ -129,3 +129,16 @@ function Feed(mblog) {
 }
 util.inherits(Feed, Models);
 
+Feed.prototype.byUser = function (handle, cb) {
+  var msgs = [];
+  this.feed.createReadStream({
+      start: [handle, -Infinity], end: [handle, +Infinity]
+    }).pipe(through(write, end));
+  function write(msg) {
+    msgs.push(msg.value);
+  }
+  function end() {
+    cb(null, msgs);
+  }
+};
+

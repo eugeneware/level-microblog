@@ -121,7 +121,7 @@ describe('microblog', function() {
   });
 
   describe('Feed', function() {
-    var msgCount = 10;
+    var msgCount = 3;
 
     beforeEach(function(done) {
       var num = msgCount;
@@ -149,6 +149,16 @@ describe('microblog', function() {
           expect(msg.to).to.equal('rvagg');
           done();
         });
+      });
+    });
+
+    it('should be able to get the feed for a user', function(done) {
+      mblog.Feed.byUser('eugeneware', function (err, msgs) {
+        if (err) return done(err);
+        msgs.forEach(function (msg) {
+          expect(msg.to).to.equal('eugeneware');
+        });
+        done();
       });
     });
   });
