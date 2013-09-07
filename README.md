@@ -14,7 +14,7 @@ $ npm install level-microblog
 
 # Usage
 
-[Read the tests]()
+[Read the tests](https://github.com/eugeneware/level-microblog/blob/master/test/index.js)
 
 ## License
 
