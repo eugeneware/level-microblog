@@ -111,7 +111,9 @@ describe('microblog', function() {
         expect(id).to.be.above(0);
         mblog.Messages.get(id, function (err, msg) {
           if (err) return done(err);
-          console.log(msg);
+          expect(msg.handle).to.equal('eugeneware');
+          expect(msg.message).to.equal('Wazzup?');
+          expect(msg.id).to.be.above(0);
           done();
         });
       });

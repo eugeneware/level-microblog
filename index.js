@@ -89,7 +89,7 @@ Users.prototype.message = function(handle, msg, cb) {
   var self = this;
   this.get(handle, function (err, user) {
     if (err) return cb(err);
-    var message = { message: msg };
+    var message = { handle: user.handle, message: msg };
     self.mblog.Messages.save(message, cb);
   });
 };
