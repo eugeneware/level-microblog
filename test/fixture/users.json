@@ -1,14 +1,17 @@
 [
   {
       "handle": "eugeneware",
-      "name": "Eugene Ware"
+      "name": "Eugene Ware",
+      "followers": ["rvagg"]
   },
   {
       "handle": "rvagg",
-      "name": "Rod Vagg"
+      "name": "Rod Vagg",
+      "followers": ["eugeneware", "domictarr"]
   },
   {
       "handle": "dominictarr",
-      "name": "Dominic Tarr"
+      "name": "Dominic Tarr",
+      "followers": ["rvagg", "eugeneware"]
   }
 ]

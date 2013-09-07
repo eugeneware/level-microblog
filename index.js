@@ -1,4 +1,5 @@
 var level = require('level'),
+    util = require('util'),
     through = require('through'),
     sublevel = require('level-sublevel');
 
@@ -14,35 +15,50 @@ LevelMicroBlog.prototype.close = function(cb) {
   cb(null);
 }
 
-function Users(mblog) {
+function Models(mblog, name, key) {
+  this.name = name;
+  this.key = key;
   this.mblog = mblog;
-  this.users = this.mblog.db.sublevel('users');
+  this[this.name] = this.mblog.db.sublevel(name);
 }
 
-Users.prototype.all = function(cb) {
-  var users = [];
-  this.users.createReadStream().pipe(through(write, end));
-  function write(user) {
-    users.push(user.value);
+Models.prototype.all = function(cb) {
+  var models = [];
+  this[this.name].createReadStream().pipe(through(write, end));
+  function write(model) {
+    models.push(model.value);
   }
   function end() {
-    cb(null, users);
+    cb(null, models);
   }
 };
 
-Users.prototype.save = function(user, cb) {
-  this.users.put(user.handle, user, cb);
+Models.prototype.save = function(model, cb) {
+  this[this.name].put(model[this.key], model, cb);
 };
 
-Users.prototype.get = function(handle, cb) {
-  this.users.get(handle, function (err, data) {
+
+Models.prototype.get = function(key, cb) {
+  this[this.name].get(key, function (err, data) {
     if (err) return cb(err);
     cb(null, data);
   });
 };
 
-Users.prototype.del = function(handle, cb) {
-  this.users.del(handle, cb);
+Models.prototype.del = function(key, cb) {
+  this[this.name].del(key, cb);
+};
+
+function Users(mblog) {
+  Models.call(this, mblog, 'users', 'handle');
 }
+
+util.inherits(Users, Models);
+
+Users.prototype.message = function(handle, msg, cb) {
+  process.nextTick(function () {
+    cb(null, {});
+  });
+};
 
 module.exports = LevelMicroBlog;

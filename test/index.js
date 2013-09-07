@@ -59,4 +59,23 @@ describe('microblog', function() {
       done();
     });
   });
+
+  it('should be able to get a list of followers', function(done) {
+    mblog.Users.all(function (err, users) {
+      if (err) return done(err);
+      expect(users.length).to.equal(3);
+      users.forEach(function (user) {
+        expect(user.followers.length).to.be.above(0);
+      });
+      done();
+    });
+  });
+
+  it('should be able to send a status update', function(done) {
+    mblog.Users.message('eugeneware', 'Wazzup?', function (err, message) {
+      if (err) return done(err);
+      console.log(message);
+      done();
+    });
+  });
 });
