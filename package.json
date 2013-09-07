@@ -41,6 +41,7 @@
     "level": "~0.15.0",
     "through": "~2.3.4",
     "after": "~0.8.1",
-    "monotonic-timestamp": "0.0.8"
+    "monotonic-timestamp": "0.0.8",
+    "bytewise-hex": "0.0.1"
   }
 }

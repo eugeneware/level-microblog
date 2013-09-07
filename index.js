@@ -1,8 +1,11 @@
 var level = require('level'),
     util = require('util'),
     through = require('through'),
+    bytewise = require('bytewise-hex'),
     timestamp = require('monotonic-timestamp'),
     sublevel = require('level-sublevel');
+
+module.exports = LevelMicroBlog;
 
 /**
  * Main Microblog Class
@@ -10,7 +13,7 @@ var level = require('level'),
 
 function LevelMicroBlog(dbPath) {
   if (!(this instanceof LevelMicroBlog)) return new LevelMicroBlog(dbPath);
-  this.db = sublevel(level(dbPath, { valueEncoding: 'json' }));
+  this.db = sublevel(level(dbPath, { keyEncoding: bytewise, valueEncoding: 'json' }));
   this.Users = new Users(this);
   this.Messages = new Messages(this);
 }
@@ -83,8 +86,11 @@ function Users(mblog) {
 util.inherits(Users, Models);
 
 Users.prototype.message = function(handle, msg, cb) {
-  process.nextTick(function () {
-    cb(null, {});
+  var self = this;
+  this.get(handle, function (err, user) {
+    if (err) return cb(err);
+    var message = { message: msg };
+    self.mblog.Messages.save(message, cb);
   });
 };
 
@@ -98,5 +104,3 @@ function Messages(mblog) {
 util.inherits(Messages, Models);
 
 Messages.prototype.keyfn = timestamp;
-
-module.exports = LevelMicroBlog;

@@ -106,9 +106,14 @@ describe('microblog', function() {
     });
 
     it('should be able to send a status update', function(done) {
-      mblog.Users.message('eugeneware', 'Wazzup?', function (err, message) {
+      mblog.Users.message('eugeneware', 'Wazzup?', function (err, id) {
         if (err) return done(err);
-        done();
+        expect(id).to.be.above(0);
+        mblog.Messages.get(id, function (err, msg) {
+          if (err) return done(err);
+          console.log(msg);
+          done();
+        });
       });
     });
   });
