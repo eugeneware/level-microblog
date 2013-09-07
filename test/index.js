@@ -121,24 +121,16 @@ describe('microblog', function() {
   });
 
   describe('Feed', function() {
-    it('should be able to stick a message into a feed', function(done) {
+    it('should be able to send a status update to followers', function(done) {
       mblog.Users.message('eugeneware', 'Wazzup?', function (err, id) {
         if (err) return done(err);
-        mblog.Messages.get(id, function (err, msg) {
+        mblog.Feed.get(['rvagg', id], function (err, msg) {
           if (err) return done(err);
-          mblog.Feed.save(msg, function (err, id) {
-            if (err) return done(err);
-            expect(id.length).to.equal(2);
-            expect(id[0]).to.equal('eugeneware');
-            expect(id[1]).to.be.above(0);
-            mblog.Feed.get(id, function (err, msg) {
-              if (err) return done(err);
-              expect(msg.handle).to.equal('eugeneware');
-              expect(msg.message).to.equal('Wazzup?');
-              expect(msg.id).to.equal(id[1]);
-              done();
-            });
-          });
+          expect(msg.handle).to.equal('eugeneware');
+          expect(msg.message).to.equal('Wazzup?');
+          expect(msg.id).to.be.above(0);
+          expect(msg.to).to.equal('rvagg');
+          done();
         });
       });
     });

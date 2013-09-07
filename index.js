@@ -3,7 +3,8 @@ var level = require('level'),
     through = require('through'),
     bytewise = require('bytewise-hex'),
     timestamp = require('monotonic-timestamp'),
-    sublevel = require('level-sublevel');
+    sublevel = require('level-sublevel'),
+    after = require('after');
 
 module.exports = LevelMicroBlog;
 
@@ -94,7 +95,17 @@ Users.prototype.message = function(handle, msg, cb) {
   this.get(handle, function (err, user) {
     if (err) return cb(err);
     var message = { handle: user.handle, message: msg };
-    self.mblog.Messages.save(message, cb);
+    self.mblog.Messages.save(message, function (err, id) {
+      if (err) return cb(err);
+      var next = after(user.followers.length, done);
+      user.followers.forEach(function (follower) {
+        message.to = follower;
+        self.mblog.Feed.save(message, next);
+      });
+      function done() {
+        cb(null, id);
+      }
+    });
   });
 };
 
@@ -113,7 +124,7 @@ Messages.prototype.keyfn = timestamp;
  * Feed
  */
 function Feed(mblog) {
-  Models.call(this, mblog, 'feed', ['handle', 'id']);
+  Models.call(this, mblog, 'feed', ['to', 'id']);
 }
 util.inherits(Feed, Models);
 
