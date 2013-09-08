@@ -1,7 +1,7 @@
 var level = require('level'),
     util = require('util'),
     through = require('through'),
-    bytewise = require('bytewise-hex'),
+    bytewise = require('bytewise/hex'),
     timestamp = require('monotonic-timestamp'),
     sublevel = require('level-sublevel'),
     after = require('after');
