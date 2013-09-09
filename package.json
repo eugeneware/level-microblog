@@ -1,6 +1,6 @@
 {
   "name": "level-microblog",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple microblog app build on leveldb/levelup",
   "main": "index.js",
   "scripts": {
